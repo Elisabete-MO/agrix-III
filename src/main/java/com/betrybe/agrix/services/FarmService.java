@@ -4,11 +4,10 @@ import com.betrybe.agrix.controllers.dto.FarmDto;
 import com.betrybe.agrix.exceptions.FarmNotFoundException;
 import com.betrybe.agrix.models.entities.Farm;
 import com.betrybe.agrix.models.repositories.FarmRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Service for the Farm entity.

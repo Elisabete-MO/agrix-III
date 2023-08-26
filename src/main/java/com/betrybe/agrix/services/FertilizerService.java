@@ -4,11 +4,10 @@ import com.betrybe.agrix.controllers.dto.FertilizerDto;
 import com.betrybe.agrix.exceptions.FertilizerNotFoundException;
 import com.betrybe.agrix.models.entities.Fertilizer;
 import com.betrybe.agrix.models.repositories.FertilizerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Service for the Fertilizer entity.

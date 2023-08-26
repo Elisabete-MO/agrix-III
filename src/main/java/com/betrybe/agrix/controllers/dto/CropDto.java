@@ -2,7 +2,6 @@ package com.betrybe.agrix.controllers.dto;
 
 import com.betrybe.agrix.models.entities.Crop;
 import com.betrybe.agrix.models.entities.Farm;
-
 import java.time.LocalDate;
 
 /**
