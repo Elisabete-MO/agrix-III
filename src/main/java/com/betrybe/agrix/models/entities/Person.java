@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -25,7 +26,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Entity
 @Table(name = "person")
 //@EntityListeners(AuditingEntityListener.class)
-public class Person implements UserDetails {
+public class Person implements UserDetails, GrantedAuthority {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -89,8 +90,14 @@ public class Person implements UserDetails {
 
   @JsonIgnore
   @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    return Collections.singleton(new SimpleGrantedAuthority(role.getName()));
+  public Collection<Person> getAuthorities() {
+    return List.of(this);
+  }
+
+  @JsonIgnore
+  @Override
+  public String getAuthority() {
+    return this.getRole().getAuthority();
   }
 
   @Override
