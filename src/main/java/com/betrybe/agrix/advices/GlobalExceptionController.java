@@ -31,7 +31,7 @@ public class GlobalExceptionController {
 
   @ExceptionHandler(RuntimeException.class)
   public ResponseEntity<String> handleRuntimeException(RuntimeException e) {
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
   }
 
   @ExceptionHandler(Exception.class)
