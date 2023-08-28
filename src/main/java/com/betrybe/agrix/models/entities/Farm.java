@@ -1,6 +1,8 @@
 package com.betrybe.agrix.models.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -8,12 +10,18 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * Farm entity.
  */
 @Entity
 @Table(name = "farm")
+//@EntityListeners(AuditingEntityListener.class)
+//@Audited
 public class Farm {
 
   @Id
@@ -26,6 +34,14 @@ public class Farm {
 
   @OneToMany(mappedBy = "farm")
   private List<Crop> crops = new ArrayList<>();
+
+  //  @Column(name = "created_by")
+  //  @CreatedBy
+  //  private String createdBy;
+  //
+  //  @Column(name = "modified_by")
+  //  @LastModifiedBy
+  //  private String modifiedBy;
 
   public Farm() {
   }

@@ -2,6 +2,7 @@ package com.betrybe.agrix.models.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,12 +13,18 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.List;
+import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * Crop entity.
  */
 @Entity
 @Table(name = "crop")
+//@EntityListeners(AuditingEntityListener.class)
+//@Audited
 public class Crop {
 
   @Id
@@ -44,6 +51,14 @@ public class Crop {
       joinColumns = @JoinColumn(name = "crop_id"),
       inverseJoinColumns = @JoinColumn(name = "fertilizer_id"))
   private List<Fertilizer> fertilizers;
+
+  //  @Column(name = "created_by")
+  //  @CreatedBy
+  //  private String createdBy;
+  //
+  //  @Column(name = "modified_by")
+  //  @LastModifiedBy
+  //  private String modifiedBy;
 
   public Crop() {
   }

@@ -1,22 +1,26 @@
 package com.betrybe.agrix.solution;
 
-import com.betrybe.agrix.ebytr.staff.entity.Person;
-import com.betrybe.agrix.ebytr.staff.exception.PersonNotFoundException;
-import com.betrybe.agrix.ebytr.staff.repository.PersonRepository;
-import com.betrybe.agrix.ebytr.staff.service.PersonService;
+import com.betrybe.agrix.controllers.dto.PersonCreationDto;
+import com.betrybe.agrix.controllers.dto.PersonDto;
+import com.betrybe.agrix.models.entities.Person;
+import com.betrybe.agrix.security.Role;
+import com.betrybe.agrix.exceptions.PersonNotFoundException;
+import com.betrybe.agrix.models.repositories.PersonRepository;
+import com.betrybe.agrix.services.PersonService;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
+@AutoConfigureTestDatabase
 @ActiveProfiles("test")
 public class PersonServiceTest {
 
@@ -29,17 +33,17 @@ public class PersonServiceTest {
   @DisplayName("1 - Person Creation - Service Layer")
   public void TestPersonCreation() {
     // Arrange
-    Person person = createTestPerson();
+    PersonCreationDto personCreationDto = createTestPerson();
     Person personToReturn = createTestPersonWithId(42L);
 
     when(personRepository.save(any(Person.class))).thenReturn(personToReturn);
 
     // Act
-    Person savedPerson = personService.create(person);
+    PersonDto savedPerson = personService.create(personCreationDto);
 
     // Assert
     verify(personRepository).save(any(Person.class));
-    assertPersonEquals(personToReturn, savedPerson);
+    assertPersonEquals(PersonDto.fromPerson(personToReturn), Optional.ofNullable(savedPerson));
   }
 
   @Test
@@ -52,11 +56,11 @@ public class PersonServiceTest {
     when(personRepository.findById(anyLong())).thenReturn(Optional.of(personToReturn));
 
     // Act
-    Person result = personService.getPersonById(id);
+    Optional<PersonDto> result = personService.getPersonById(id);
 
     // Assert
     verify(personRepository).findById(eq(id));
-    assertPersonEquals(personToReturn, result);
+    assertPersonEquals(createTestPersonDto(), result);
   }
 
   @Test
@@ -81,11 +85,11 @@ public class PersonServiceTest {
     when(personRepository.findByUsername(eq("Teste"))).thenReturn(Optional.of(personToReturn));
 
     // Act
-    Person result = personService.getPersonByUsername("Teste");
+    Optional<PersonDto> result = personService.getPersonByUsername("Teste");
 
     // Assert
     verify(personRepository).findByUsername(eq("Teste"));
-    assertPersonEquals(personToReturn, result);
+    assertPersonEquals(PersonDto.fromPerson(personToReturn), result);
   }
 
   @Test
@@ -102,23 +106,23 @@ public class PersonServiceTest {
   }
 
   // Helper methods
-  private Person createTestPerson() {
-    Person person = new Person();
-    person.setUsername("Teste");
-    person.setPassword("123456");
-    return person;
+  private PersonCreationDto createTestPerson() {
+    return new PersonCreationDto( Role.ADMIN,null, "Teste", "123456");
   }
 
   private Person createTestPersonWithId(Long id) {
-    Person person = createTestPerson();
+    Person person = createTestPerson().toPerson();
     person.setId(id);
     return person;
   }
 
-  private void assertPersonEquals(Person expected, Person actual) {
+  private PersonDto createTestPersonDto() {
+    return new PersonDto(Role.ADMIN, 1L, "Teste");
+  }
+
+  private void assertPersonEquals(PersonDto expected, Optional<PersonDto> actual) {
     assertNotNull(actual);
-    assertEquals(expected.getId(), actual.getId());
-    assertEquals(expected.getUsername(), actual.getUsername());
-    assertEquals(expected.getPassword(), actual.getPassword());
+    assertEquals(expected.id(), actual.get().id());
+    assertEquals(expected.username(), actual.get().username());
   }
 }
