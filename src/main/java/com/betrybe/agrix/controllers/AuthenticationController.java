@@ -3,7 +3,7 @@ package com.betrybe.agrix.controllers;
 import com.betrybe.agrix.controllers.dto.AuthenticationDto;
 import com.betrybe.agrix.controllers.dto.PersonCreationDto;
 import com.betrybe.agrix.controllers.dto.PersonDto;
-import com.betrybe.agrix.models.entities.Person;
+import com.betrybe.agrix.exceptions.WrongArgumentException;
 import com.betrybe.agrix.services.PersonService;
 import com.betrybe.agrix.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Controller for the Person entity.
  */
 @RestController
-@RequestMapping(value = "/persons")
+@RequestMapping
 public class AuthenticationController {
 
   private final AuthenticationManager authenticationManager;
@@ -44,7 +43,7 @@ public class AuthenticationController {
     this.tokenService = tokenService;
   }
 
-  @PostMapping()
+  @PostMapping("/persons")
   public ResponseEntity<PersonDto> createPerson(
       @RequestBody PersonCreationDto personCreationDto) {
     PersonDto newPerson = personService.create(personCreationDto);
@@ -56,17 +55,20 @@ public class AuthenticationController {
    * @param authenticationDto dto with the username, role and password
    * @return a response entity with the token
    */
-  @PostMapping("/login")
-  public ResponseEntity<String> login(@RequestBody AuthenticationDto authenticationDto) {
-    UsernamePasswordAuthenticationToken usernamePassword =
-        new UsernamePasswordAuthenticationToken(authenticationDto
-            .username(), authenticationDto.password());
-    Authentication auth = authenticationManager.authenticate(usernamePassword);
-    Person person = (Person) auth.getPrincipal();
-    if (new BCryptPasswordEncoder().matches(authenticationDto.password(), person.getPassword())) {
-      return ResponseEntity.status(HttpStatus.OK).body(tokenService.generateToken(person));
-      // ("Pessoa autenticada com sucesso!"
+  @PostMapping("/auth/login")
+  public ResponseEntity<TokenResponse> login(@RequestBody AuthenticationDto authenticationDto) {
+    try {
+      UsernamePasswordAuthenticationToken usernamePassword =
+          new UsernamePasswordAuthenticationToken(authenticationDto
+              .username(), authenticationDto.password());
+      Authentication auth = authenticationManager.authenticate(usernamePassword);
+      User person = (User) auth.getPrincipal();
+      TokenResponse response = new TokenResponse(tokenService.generateToken(person));
+      return ResponseEntity.status(HttpStatus.OK).body(response);
+    } catch (Exception e) {
+      throw new WrongArgumentException("Invalid credentials");
     }
-    throw new IllegalArgumentException("Senha incorreta!");
   }
+
+  private record TokenResponse(String token) {}
 }

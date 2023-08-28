@@ -33,24 +33,18 @@ public class SecurityConfiguration {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity)
       throws Exception {
-    //    return httpSecurity
-    //        .csrf(AbstractHttpConfigurer::disable)
-    //        .sessionManagement(session -> session
-    //            .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-    //        .authorizeHttpRequests(authorize -> authorize
-    //            .requestMatchers(HttpMethod.POST, "/farms").permitAll()
-    //            .requestMatchers(HttpMethod.GET, "/crops",
-    //                "/fertilizers", "/farms", "persons").permitAll()
-    //            .requestMatchers(HttpMethod.GET, "/crops/search").permitAll()
-    //            .requestMatchers(HttpMethod.POST, "/persons").permitAll()
-    //            .anyRequest().authenticated()
-    //        )
-    //        .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
     return httpSecurity
         .csrf(AbstractHttpConfigurer::disable)
         .sessionManagement(session -> session
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .build();
+        .authorizeHttpRequests(authorize -> authorize
+            .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+            .requestMatchers(HttpMethod.POST, "/persons").permitAll()
+            .requestMatchers(HttpMethod.GET, "/persons").permitAll()
+            .anyRequest().authenticated()
+        )
+    //            .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+    .build();
   }
 
   @Bean

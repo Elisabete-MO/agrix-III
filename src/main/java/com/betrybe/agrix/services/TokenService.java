@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,7 +24,7 @@ public class TokenService {
    * @param person - person to be authenticated
    * @return - token
    */
-  public String generateToken(Person person) {
+  public String generateToken(User person) {
     Algorithm algorithm = Algorithm.HMAC256(secret);
     return JWT.create()
         .withIssuer("agrix") //quem criou o token
